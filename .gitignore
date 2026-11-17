@@ -1,0 +1,59 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Secrets and local state
+.env
+.env.*
+!.env.example
+tokens/
+token.json
+token.lock
+credentials.json
+*.token
+*.tgz
+
+# Browser profiles / Playwright state
+profile/
+*/profile/
+browser-profile/
+.auth-profile/
+.playwright/
+.ms-playwright/
+ms-playwright/
+
+# Captured artifacts and logs
+artifacts/
+recon-artifacts/
+*.har
+*.log
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+
+# Internal research, recon and QA reports (kept local, never published)
+docs/recon-artifacts/
+docs/phase1-recon.md
+docs/qa-report.md
+docs/agent-eval*.md
+docs/hardening-report.md
+docs/fuzz-report.md
+docs/freeform-*
+docs/safety-redteam.md
+docs/teams-*.md
+docs/secretary-*.md
+docs/usecase-eval*.md
+docs/unw-usecase-eval*.md
+docs/token-audit.md
+docs/env.md
+
+# One-off recon/probe scripts and Python cache
+scripts/recon/
+scripts/dev/agent-eval/
+scripts/dev/eval-unw-*
+scripts/dev/protocol-probe.mjs
+scripts/dev/__pycache__/
+__pycache__/

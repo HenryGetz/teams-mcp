@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "teams": {
+      "command": "npx",
+      "args": ["-y", "github:HenryGetz/teams-mcp"],
+      "env": {
+        "TEAMS_MCP_TIMEZONE": "America/Chicago",
+        "TEAMS_MCP_READ_ONLY": "1"
+      }
+    }
+  }
+}

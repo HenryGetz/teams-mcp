@@ -1,0 +1,112 @@
+# teams-mcp configuration
+#
+# Copy to ~/.config/teams-mcp/config.yaml and edit. Every key is optional and
+# the values shown match the built-in defaults, except `safety.read_only`, which
+# is deliberately `true` here (built-in default: false) so a copied config cannot
+# write to a live mailbox. Precedence: environment variables > this file >
+# defaults.
+#
+# Edit with the MCP `settings` tool or:
+#   node dist/cli.js settings get
+#   node dist/cli.js settings set work_hours.start 08:30
+# Invalid values are rejected before the file is written.
+
+# IANA timezone used for every rendering and for working-hours rules.
+timezone: America/Chicago
+
+work_hours:
+  days: [mon, tue, wed, thu, fri]
+  start: "09:00"     # 24h, zero padded
+  end: "17:00"
+
+# Default meeting length for availability op=suggest.
+default_duration_min: 30
+
+# Friendly names resolved to addresses before any Graph call.
+aliases: {}
+#  joel: joel@example.com
+#  design-team: design@example.com
+
+# Who may be invited. Empty list = no restriction. Entries are full addresses or
+# domain suffixes such as "@example.com".
+invite_allowlist: []
+
+# Recurring no-meeting windows, local time. `days` defaults to every day.
+blocked_times: []
+#  - {start: "12:00", end: "13:00", reason: lunch}
+#  - {start: "08:00", end: "09:00", days: [mon, wed, fri], reason: focus}
+
+# Where calendar snapshots are written. Defaults to
+# ${XDG_CACHE_HOME:-~/.cache}/teams-mcp/snapshots.
+# snapshot_dir: ~/.cache/teams-mcp/snapshots
+
+cache:
+  # The signed-in user's own calendar is re-read this often.
+  own_calendar_ttl_minutes: 5
+  # Other people's busy blocks may come from a stale snapshot for this long.
+  busy_ttl_minutes: 30
+  # Directory (people) lookups, in-process.
+  directory_ttl_minutes: 60
+
+# Prefix marking events that teams-mcp created during tests; never treated as
+# real commitments when reading busy blocks.
+test_event_prefix: "[test]"
+
+max_results:
+  # Per-page cap for mail.list/search; the schema allows top<=50, this value
+  # (1-50) is the operator's opt-in ceiling. Default 25.
+  mail: 25
+  calendar: 50
+  people: 25
+  slots: 5
+  # Default cap on mail previews, 40-1000 chars (per-call preview_chars wins).
+  preview_chars: 300
+
+# Teams send scope. `teams.send` may post to a target this server created
+# (recorded in teams-state.json) or to a target listed here. There is no
+# model-facing override: only this file, TEAMS_MCP_TEAMS_ALLOWED_TARGETS, or the
+# shell CLI can widen it. Entries are `chat:<chat_id>` or
+# `channel:<team_id>/<channel_id>`.
+teams:
+  allowed_targets: []
+
+# Capability scoping. This example is SAFE BY DEFAULT: read_only is true, so a
+# fresh copy refuses every mutating op before any request. Reads, availability,
+# snapshots, auth.status and auth.login still work.
+#
+# Enable writes only for a trusted, human-supervised task on a mailbox you are
+# authorized to change:
+#   1. set `read_only: false` below (or remove TEAMS_MCP_READ_ONLY from the MCP
+#      env — the env var wins over this file), and
+#   2. leave unsubscribe.enabled false unless the task really is "manage my
+#      subscriptions", and keep the daily cap small. One-click unsubscribe is
+#      irreversible and reaches a third party.
+safety:
+  # Shipped as true (built-in default: false). Refuses mail
+  # send/reply/forward/mark/move/unsubscribe_apply, calendar
+  # create/update/delete/respond, settings.set and auth.logout before any
+  # request. Overridden by TEAMS_MCP_READ_ONLY.
+  read_only: true
+
+  unsubscribe:
+    # One-click unsubscribe is an irreversible external action. It stays off
+    # unless an operator opts in. Overridden by TEAMS_MCP_UNSUBSCRIBE_ENABLED.
+    enabled: false
+    # Maximum EXTERNAL unsubscribe actions per local day, not apply calls: an
+    # https one-click POST and a mailto send each take a slot, so a message with
+    # both costs 2. 0 disables them even when enabled above. Overridden by
+    # TEAMS_MCP_UNSUBSCRIBE_DAILY_CAP.
+    daily_cap: 5
+
+  # ONE global per-process token bucket shared by every mutating op: mail
+  # send/reply/forward/mark/move/unsubscribe_apply, calendar
+  # create/update/delete/respond, settings.set and auth.login/logout. A
+  # rate-limited call makes no network request. Overridden by
+  # TEAMS_MCP_WRITE_RATE_LIMIT_PER_MINUTE.
+  write_rate_limit_per_minute: 30
+
+# NB: `safety.*`, `teams.allowed_targets` and `invite_allowlist` are
+# operator-owned. The MCP `settings` tool refuses to change them (an agent must
+# not be able to disable read-only, enable unsubscribe, raise a cap or widen an
+# allowlist); edit this file or run `node dist/cli.js settings set …` from a
+# shell.

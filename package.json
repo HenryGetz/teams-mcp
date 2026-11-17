@@ -1,0 +1,70 @@
+{
+  "name": "teams-mcp",
+  "version": "0.1.0",
+  "description": "Token-efficient MCP server for Outlook mail and calendar, scheduling across people, directory lookup, and Microsoft Teams chats/channels/messages via Microsoft Graph",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "teams-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SECURITY.md",
+    "DISCLAIMER.md",
+    "docs/design.md",
+    "docs/usage.md",
+    "docs/auth.md",
+    "config.example.yaml",
+    "mcp.example.json",
+    ".env.example"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "node scripts/dev/list-tools.mjs",
+    "live-writes": "node scripts/dev/live-writes.mjs",
+    "fuzz": "node scripts/dev/fuzz-probe.mjs",
+    "fuzz:live": "node scripts/dev/fuzz-probe.mjs --live"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "playwright": "^1.65.1",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  },
+  "license": "MIT",
+  "author": "Henry Getz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HenryGetz/teams-mcp.git"
+  },
+  "homepage": "https://github.com/HenryGetz/teams-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/HenryGetz/teams-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "outlook",
+    "microsoft-teams",
+    "graph",
+    "mail",
+    "calendar"
+  ]
+}
